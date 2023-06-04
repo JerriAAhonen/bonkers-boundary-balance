@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float tapForce;
     [SerializeField] private float horizontalMovementSpeed;
     [SerializeField] private float movementSpeedIncreaseMultiplier;
+    [SerializeField] private Animator animator;
 
     private Rigidbody2D rb;
     private bool pendingTap;
@@ -15,6 +16,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator.SetBool("GameRunning", true);
     }
 
     private void Update()
@@ -43,12 +45,13 @@ public class PlayerController : MonoBehaviour
         var movementSpeed = Mathf.Max(horizontalMovementSpeed, horizontalMovementSpeed * (timeSinceLevelStart * movementSpeedIncreaseMultiplier));
 
         rb.velocity = new Vector3(movementSpeed, rb.velocity.y);
-        Debug.Log(movementSpeed);
+        //Debug.Log(movementSpeed);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Debug.Log("Game over");
         GameManager.Instance.GameOver();
+        animator.SetBool("GameRunning", false);
     }
 }
