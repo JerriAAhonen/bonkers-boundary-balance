@@ -23,7 +23,7 @@ public class GameManager : Singleton<GameManager>
 
         // Generate more level ahead of the player
         if (levelController.LastPosition.x - playerController.transform.position.x < minPlayerDistanceToLevelEdge)
-            levelController.AddSegment();
+            levelController.AddSegments(10);
 
         // While the game is running, update player score
         if (GameRunning)

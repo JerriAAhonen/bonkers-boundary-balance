@@ -71,25 +71,29 @@ public class LevelController : MonoBehaviour
         topSpline.SetRightTangent(index, Vector3.right * xStepDistance * curveSmoothness);
     }
 
+#if UNITY_EDITOR
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.A))
-            AddSegment();
+            AddSegments(1);
     }
+#endif
 
-    public void AddSegment()
+    public void AddSegments(int count)
     {
-        // Insert segment after last ground segment = levelLenght - 1
+        for (int i = 0; i < count; i++)
+        {
+            LastPosition = transform.position + new Vector3(levelLength * xStepDistance, Mathf.PerlinNoise(0, levelLength * noiseStep) * yStepDistance);
 
-        LastPosition = transform.position + new Vector3(levelLength * xStepDistance, Mathf.PerlinNoise(0, levelLength * noiseStep) * yStepDistance);
-        bottomSpline.InsertPointAt(levelLength, LastPosition);
-        topSpline.InsertPointAt(levelLength, LastPosition + Vector3.up * roofDistance);
+            bottomSpline.InsertPointAt(levelLength, LastPosition);
+            topSpline.InsertPointAt(levelLength, LastPosition + Vector3.up * roofDistance);
 
-        SetContinuousTangent(levelLength - 1);
+            SetContinuousTangent(levelLength - 1);
 
-        // Move segment (levelLenght) to new lastPos.x
-        bottomSpline.SetPosition(levelLength + 1, new Vector3(LastPosition.x, transform.position.y - bottomThickness));
-        topSpline.SetPosition(levelLength + 1, new Vector3(LastPosition.x, transform.position.y + roofDistance + topThickness));
-        levelLength++;
+            bottomSpline.SetPosition(levelLength + 1, new Vector3(LastPosition.x, transform.position.y - bottomThickness));
+            topSpline.SetPosition(levelLength + 1, new Vector3(LastPosition.x, transform.position.y + roofDistance + topThickness));
+
+            levelLength++;
+        }
     }
 }
