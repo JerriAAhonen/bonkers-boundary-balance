@@ -19,6 +19,10 @@ public class LevelController : MonoBehaviour
     [Space]
     [SerializeField] private float bottomThickness;
     [SerializeField] private float topThickness;
+    [Space]
+    [SerializeField] private GameObject obstaclePrefab;
+    [Range(0f, 1f)]
+    [SerializeField] private float chanceForObstacle;
 
     private Spline bottomSpline;
     private Spline topSpline;
@@ -85,13 +89,23 @@ public class LevelController : MonoBehaviour
         {
             LastPosition = transform.position + new Vector3(levelLength * xStepDistance, Mathf.PerlinNoise(0, levelLength * noiseStep) * yStepDistance);
 
+            // Add new points at the end of the ground and roof lines
             bottomSpline.InsertPointAt(levelLength, LastPosition);
             topSpline.InsertPointAt(levelLength, LastPosition + Vector3.up * roofDistance);
 
             SetContinuousTangent(levelLength - 1);
 
+            // Move the bottom and top right corner to match on the x-axis
             bottomSpline.SetPosition(levelLength + 1, new Vector3(LastPosition.x, transform.position.y - bottomThickness));
             topSpline.SetPosition(levelLength + 1, new Vector3(LastPosition.x, transform.position.y + roofDistance + topThickness));
+
+            // Should an obstacle be spawned
+            if (Random.Range(0f, 1f) < chanceForObstacle)
+            {
+                var obstacle = Instantiate(obstaclePrefab);
+                var yPos = Random.Range(LastPosition.y, LastPosition.y + roofDistance);
+                obstacle.transform.position = new Vector3(LastPosition.x, yPos);
+            }
 
             levelLength++;
         }
