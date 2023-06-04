@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private bool pendingTap;
     private float timeSinceLevelStart;
+    private bool ascend;
 
     private void Awake()
     {
@@ -25,10 +26,7 @@ public class PlayerController : MonoBehaviour
         if (!GameManager.Instance.GameRunning)
             return;
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            pendingTap = true;
-        }
+        ascend = Input.GetMouseButton(0);
     }
 
     private void FixedUpdate()
@@ -36,10 +34,9 @@ public class PlayerController : MonoBehaviour
         if (!GameManager.Instance.GameRunning)
             return;
 
-        if (pendingTap)
+        if (ascend)
         {
             rb.velocity = new Vector3(horizontalMovementSpeed, tapForce);
-            pendingTap = false;
         }
 
         timeSinceLevelStart += Time.fixedDeltaTime;
