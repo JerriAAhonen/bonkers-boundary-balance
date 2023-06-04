@@ -9,7 +9,12 @@ public abstract class Singleton<T> : MonoBehaviour where T : class
 	{
 		ProcessSingleton();
 	}
-		
+
+	protected virtual void OnDestroy()
+    {
+		Instance = null;
+    }
+
 	private void  ProcessSingleton()
 	{
 		if (!Application.isPlaying) return;
