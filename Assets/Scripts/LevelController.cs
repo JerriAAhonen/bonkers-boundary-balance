@@ -1,38 +1,95 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.U2D;
 
 public class LevelController : MonoBehaviour
 {
-    [SerializeField] private SpriteShapeController spriteShapeController;
+    [SerializeField] private SpriteShapeController bottomSpriteShapeController;
+    [SerializeField] private SpriteShapeController topSpriteShapeController;
+    [Space]
     [SerializeField] private int levelLength;
     [SerializeField] private float xStepDistance;
     [SerializeField] private float yStepDistance;
+    [SerializeField] private float roofDistance;
     [SerializeField] private float noiseStep;
     [SerializeField] private float curveSmoothness;
+    [Space]
+    [SerializeField] private float bottomThickness;
+    [SerializeField] private float topThickness;
 
-    private Vector3 lastPosition;
+    private Spline bottomSpline;
+    private Spline topSpline;
+    public Vector3 LastPosition { get; private set; }
+
+    private void Awake()
+    {
+        bottomSpline = bottomSpriteShapeController.spline;
+        topSpline = topSpriteShapeController.spline;
+    }
 
     private void OnValidate()
     {
-        spriteShapeController.spline.Clear();
+        bottomSpline = bottomSpriteShapeController.spline;
+        topSpline = topSpriteShapeController.spline;
+
+        bottomSpline.Clear();
+        topSpline.Clear();
 
         for (int i = 0; i < levelLength; i++)
         {
-            lastPosition = transform.position + new Vector3(i * xStepDistance, Mathf.PerlinNoise(0, i * noiseStep) * yStepDistance);
-            spriteShapeController.spline.InsertPointAt(i, lastPosition);
+            LastPosition = transform.position + new Vector3(i * xStepDistance, Mathf.PerlinNoise(0, i * noiseStep) * yStepDistance);
+            bottomSpline.InsertPointAt(i, LastPosition);
+            topSpline.InsertPointAt(i, LastPosition + Vector3.up * roofDistance);
 
-            // if not first or last point
             if (i > 0 && i < levelLength - 1)
             {
-                spriteShapeController.spline.SetTangentMode(i, ShapeTangentMode.Continuous);
-                spriteShapeController.spline.SetLeftTangent(i, Vector3.left * xStepDistance * curveSmoothness);
-                spriteShapeController.spline.SetRightTangent(i, Vector3.right * xStepDistance * curveSmoothness);
+                SetContinuousTangent(i);
             }
         }
 
-        spriteShapeController.spline.InsertPointAt(levelLength, new Vector3(lastPosition.x, transform.position.y - 10f));
-        spriteShapeController.spline.InsertPointAt(levelLength + 1, transform.position + Vector3.down * 10f);
+        bottomSpline.InsertPointAt(levelLength, new Vector3(LastPosition.x, transform.position.y - bottomThickness));
+        bottomSpline.InsertPointAt(levelLength + 1, transform.position + Vector3.down * bottomThickness);
+
+        topSpline.InsertPointAt(levelLength, new Vector3(LastPosition.x, transform.position.y + roofDistance + topThickness));
+        topSpline.InsertPointAt(levelLength + 1, transform.position + Vector3.up * roofDistance + Vector3.up * topThickness);
+
+        if (!Application.isPlaying)
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+    }
+
+    private void SetContinuousTangent(int index)
+    {
+        bottomSpline.SetTangentMode(index, ShapeTangentMode.Continuous);
+        bottomSpline.SetLeftTangent(index, Vector3.left * xStepDistance * curveSmoothness);
+        bottomSpline.SetRightTangent(index, Vector3.right * xStepDistance * curveSmoothness);
+
+        topSpline.SetTangentMode(index, ShapeTangentMode.Continuous);
+        topSpline.SetLeftTangent(index, Vector3.left * xStepDistance * curveSmoothness);
+        topSpline.SetRightTangent(index, Vector3.right * xStepDistance * curveSmoothness);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.A))
+            AddSegment();
+    }
+
+    public void AddSegment()
+    {
+        // Insert segment after last ground segment = levelLenght - 1
+
+        LastPosition = transform.position + new Vector3(levelLength * xStepDistance, Mathf.PerlinNoise(0, levelLength * noiseStep) * yStepDistance);
+        bottomSpline.InsertPointAt(levelLength, LastPosition);
+        topSpline.InsertPointAt(levelLength, LastPosition + Vector3.up * roofDistance);
+
+        SetContinuousTangent(levelLength - 1);
+
+        // Move segment (levelLenght) to new lastPos.x
+        bottomSpline.SetPosition(levelLength + 1, new Vector3(LastPosition.x, transform.position.y - bottomThickness));
+        topSpline.SetPosition(levelLength + 1, new Vector3(LastPosition.x, transform.position.y + roofDistance + topThickness));
+        levelLength++;
     }
 }

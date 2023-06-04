@@ -6,9 +6,11 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float tapForce;
     [SerializeField] private float horizontalMovementSpeed;
+    [SerializeField] private float movementSpeedIncreaseMultiplier;
 
     private Rigidbody2D rb;
     private bool pendingTap;
+    private float timeSinceLevelStart;
 
     private void Awake()
     {
@@ -17,6 +19,9 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (!GameManager.Instance.GameRunning)
+            return;
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             pendingTap = true;
@@ -25,12 +30,25 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!GameManager.Instance.GameRunning)
+            return;
+
         if (pendingTap)
         {
-            rb.AddForce(Vector2.up * tapForce);
+            rb.velocity = new Vector3(horizontalMovementSpeed, tapForce);
             pendingTap = false;
         }
 
-        rb.velocity = new Vector3(horizontalMovementSpeed, rb.velocity.y);
+        timeSinceLevelStart += Time.fixedDeltaTime;
+        var movementSpeed = Mathf.Max(horizontalMovementSpeed, horizontalMovementSpeed * (timeSinceLevelStart * movementSpeedIncreaseMultiplier));
+
+        rb.velocity = new Vector3(movementSpeed, rb.velocity.y);
+        Debug.Log(movementSpeed);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Debug.Log("Game over");
+        GameManager.Instance.GameOver();
     }
 }
