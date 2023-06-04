@@ -8,9 +8,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float horizontalMovementSpeed;
     [SerializeField] private float movementSpeedIncrease;
     [SerializeField] private Animator animator;
+    [SerializeField] private Animator deathAnimator;
+    [SerializeField] private GameObject trail;
 
     private Rigidbody2D rb;
-    private bool pendingTap;
     private float timeSinceLevelStart;
     private bool ascend;
 
@@ -19,6 +20,8 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         rb.isKinematic = true;
         animator.SetBool("GameRunning", true);
+        deathAnimator.gameObject.SetActive(false);
+        trail.SetActive(false);
     }
 
     private void Update()
@@ -55,10 +58,13 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Game over");
         GameManager.Instance.GameOver();
         animator.SetBool("GameRunning", false);
+		deathAnimator.gameObject.SetActive(true);
+		deathAnimator.SetTrigger("Die");
     }
 
     public void OnStartGame()
     {
         rb.isKinematic = false;
+        trail.SetActive(true);
     }
 }
