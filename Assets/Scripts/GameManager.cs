@@ -18,7 +18,7 @@ public class GameManager : Singleton<GameManager>
     private void Update()
     {
         // Game not running yet, start game when recieving the first input
-        if (!gameOver && !GameRunning && Input.GetKeyDown(KeyCode.Space))
+        if (!gameOver && !GameRunning && Input.GetMouseButtonDown(0))
             StartGame();
 
         // Generate more level ahead of the player
@@ -33,9 +33,9 @@ public class GameManager : Singleton<GameManager>
         }
 
         // when the game is over, reload level on input
-        if (gameOver && !GameRunning && Input.GetKeyDown(KeyCode.Space))
+        if (gameOver && !GameRunning && Input.GetMouseButtonDown(0))
         {
-            SceneManager.LoadScene(0);
+            RestartGame();
         }
     }
 
@@ -53,5 +53,10 @@ public class GameManager : Singleton<GameManager>
 
         uiController.ShowFinalScore(score);
         uiController.ShowTapToRestart();
+    }
+
+    private void RestartGame()
+    {
+        SceneManager.LoadScene(0);
     }
 }

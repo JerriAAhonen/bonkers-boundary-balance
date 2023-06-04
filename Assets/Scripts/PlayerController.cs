@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
         if (!GameManager.Instance.GameRunning)
             return;
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetMouseButtonDown(0))
         {
             pendingTap = true;
         }
@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
         var movementSpeed = horizontalMovementSpeed + increase;
 
         rb.velocity = new Vector3(movementSpeed, rb.velocity.y);
-        Debug.Log($"multiplier: {increase}, movementSpeed: {movementSpeed}");
+        //Debug.Log($"multiplier: {increase}, movementSpeed: {movementSpeed}");
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
