@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float tapForce;
+    [SerializeField] private float ascendForce;
+    [SerializeField] private float ascendBoostMultiplier;
     [SerializeField] private float horizontalMovementSpeed;
     [SerializeField] private float movementSpeedIncrease;
     [SerializeField] private Animator animator;
@@ -14,6 +15,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private float timeSinceLevelStart;
     private bool ascend;
+    private float ascendBoost;
 
     private void Awake()
     {
@@ -39,8 +41,11 @@ public class PlayerController : MonoBehaviour
 
         if (ascend)
         {
-            rb.velocity = new Vector3(horizontalMovementSpeed, tapForce);
+            ascendBoost += Time.deltaTime * ascendBoostMultiplier;
+            rb.velocity = new Vector3(horizontalMovementSpeed, ascendForce + ascendBoost);
         }
+        else
+            ascendBoost = 0;
 
         timeSinceLevelStart += Time.fixedDeltaTime;
         var increase = timeSinceLevelStart * movementSpeedIncrease;
