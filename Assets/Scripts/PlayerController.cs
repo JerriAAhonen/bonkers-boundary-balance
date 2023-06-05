@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private Animator deathAnimator;
     [SerializeField] private GameObject trail;
+    [SerializeField] private AudioEvent deathSFX;
 
     private Rigidbody2D rb;
     private float timeSinceLevelStart;
@@ -60,11 +61,13 @@ public class PlayerController : MonoBehaviour
         if (!GameManager.Instance.GameRunning)
             return;
 
-        Debug.Log("Game over");
+        //Debug.Log("Game over");
         GameManager.Instance.GameOver();
         animator.SetBool("GameRunning", false);
 		deathAnimator.gameObject.SetActive(true);
 		deathAnimator.SetTrigger("Die");
+
+        AudioManager.Instance.PlayOnce(deathSFX);
     }
 
     public void OnStartGame()

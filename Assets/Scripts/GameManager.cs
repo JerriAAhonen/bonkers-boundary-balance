@@ -31,12 +31,6 @@ public class GameManager : Singleton<GameManager>
             score = Mathf.RoundToInt(Mathf.Max(0, playerController.transform.position.x));
             uiController.SetScore(score);
         }
-
-        // when the game is over, reload level on input
-        if (gameOver && !GameRunning && Input.GetMouseButtonDown(0))
-        {
-            RestartGame();
-        }
     }
 
     public void StartGame()
@@ -51,12 +45,17 @@ public class GameManager : Singleton<GameManager>
         gameOver = true;
         GameRunning = false;
 
-        uiController.ShowFinalScore(score);
-        uiController.ShowTapToRestart();
+        var isNewHighscore = HighscoreController.OnGameOver(score);
+        uiController.ShowFinalScore(score, isNewHighscore);
     }
 
-    private void RestartGame()
+    public void RestartGame()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
+
+    public void LoadMainMenu()
+    {
+		SceneManager.LoadScene(0);
+	}
 }

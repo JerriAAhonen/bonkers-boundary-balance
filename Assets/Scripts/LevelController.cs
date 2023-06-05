@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.U2D;
+#if UNITY_EDITOR
+using UnityEditor.SceneManagement;
+#endif
 
 public class LevelController : MonoBehaviour
 {
@@ -60,8 +62,10 @@ public class LevelController : MonoBehaviour
         topSpline.InsertPointAt(levelLength, new Vector3(LastPosition.x, transform.position.y + roofDistance + topThickness));
         topSpline.InsertPointAt(levelLength + 1, transform.position + Vector3.up * roofDistance + Vector3.up * topThickness);
 
+#if UNITY_EDITOR
         if (!Application.isPlaying)
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+#endif
     }
 
     private void SetContinuousTangent(int index)
