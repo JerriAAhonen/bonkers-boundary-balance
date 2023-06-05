@@ -737,7 +737,7 @@ MonoBehaviour:
   ascendForce: 2
   ascendBoostMultiplier: 8
   horizontalMovementSpeed: 7
-  movementSpeedIncrease: 0.02
+  movementSpeedIncrease: 0.04
   animator: {fileID: 612190655}
   deathAnimator: {fileID: 771834619}
   trail: {fileID: 1283818874}

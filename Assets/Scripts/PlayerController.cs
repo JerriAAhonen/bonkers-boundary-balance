@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour
         var movementSpeed = horizontalMovementSpeed + increase;
 
         rb.velocity = new Vector3(movementSpeed, rb.velocity.y);
-        //Debug.Log($"multiplier: {increase}, movementSpeed: {movementSpeed}");
+        //Debug.Log($"movementSpeed: {movementSpeed}, increase: {increase}");
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
