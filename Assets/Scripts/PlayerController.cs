@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
         if (!GameManager.Instance.GameRunning)
             return;
 
+        // Read user input every frame
         ascend = Input.GetMouseButton(0);
     }
 
@@ -40,6 +41,7 @@ public class PlayerController : MonoBehaviour
         if (!GameManager.Instance.GameRunning)
             return;
 
+        // Apply user input in fysics loop
         if (ascend)
         {
             ascendBoost += Time.deltaTime * ascendBoostMultiplier;
@@ -48,6 +50,7 @@ public class PlayerController : MonoBehaviour
         else
             ascendBoost = 0;
 
+        // Increase player horizontal speed over time
         timeSinceLevelStart += Time.fixedDeltaTime;
         var increase = timeSinceLevelStart * movementSpeedIncrease;
         var movementSpeed = horizontalMovementSpeed + increase;
@@ -63,6 +66,7 @@ public class PlayerController : MonoBehaviour
 
         //Debug.Log("Game over");
         GameManager.Instance.GameOver();
+
         animator.SetBool("GameRunning", false);
 		deathAnimator.gameObject.SetActive(true);
 		deathAnimator.SetTrigger("Die");

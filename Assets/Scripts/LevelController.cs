@@ -36,6 +36,8 @@ public class LevelController : MonoBehaviour
         topSpline = topSpriteShapeController.spline;
     }
 
+    // This is used in the editor to setup good parameters for the level
+    // Once the game starts, further segments are generated automatically
     private void OnValidate()
     {
         bottomSpline = bottomSpriteShapeController.spline;

@@ -78,6 +78,7 @@ public class AudioManager : PersistentSingleton<AudioManager>
 			s.PlayDelayed(audioEvent.Delay);
 	}
 
+	// TODO: Divide audio mixers to music and sfx mixers
 	public void SetVolume(float volume)
 	{
 		audioMixer.SetFloat("Volume", volume);
